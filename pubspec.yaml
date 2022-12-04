@@ -1,0 +1,33 @@
+name: code_gen
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.18.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  freezed: ^2.3.0
+  json_annotation: ^4.7.0
+  http: ^0.13.5
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  json_serializable: ^6.3.2
+  freezed_annotation: ^2.2.0
+  build_runner:
+  code_builder: ^4.3.0
+
+flutter:
+  uses-material-design: true
