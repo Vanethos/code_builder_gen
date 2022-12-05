@@ -1,6 +1,5 @@
 // This file is "main.dart"
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
 
 part 'todo_entity.freezed.dart';
 part 'todo_entity.g.dart';

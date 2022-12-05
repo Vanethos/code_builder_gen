@@ -129,7 +129,7 @@ class __$$_TodoEntityCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_TodoEntity with DiagnosticableTreeMixin implements _TodoEntity {
+class _$_TodoEntity implements _TodoEntity {
   const _$_TodoEntity(
       {required this.userId,
       required this.id,
@@ -149,19 +149,8 @@ class _$_TodoEntity with DiagnosticableTreeMixin implements _TodoEntity {
   final bool completed;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'TodoEntity(userId: $userId, id: $id, title: $title, completed: $completed)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'TodoEntity'))
-      ..add(DiagnosticsProperty('userId', userId))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('title', title))
-      ..add(DiagnosticsProperty('completed', completed));
   }
 
   @override
