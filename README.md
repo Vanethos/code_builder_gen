@@ -1,5 +1,22 @@
 # Code Builder Article
 
+## Running the generater
+
+To run the generator we need to create an `Input` model and give it to the `generateCode`
+function isnide `codegen/main.dart`
+
+Then, we need to run:
+
+```
+$ dart run codegen/input_codegen.dart
+```
+
+To run the simple example we can run:
+
+```
+$ dart run codegen/simple_codegen.dart
+```
+
 ## Plushie Directory API
 
 This Mock API aims to help us make CRUD operations on an API for Plushie

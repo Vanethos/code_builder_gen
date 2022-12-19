@@ -3,23 +3,23 @@ import 'dart:io';
 import 'package:built_collection/built_collection.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:change_case/change_case.dart';
 
 import '../input.dart';
 
 Future<void> generateModel(Model model) async {
-  final fileName = '${model.name.toLowerCase()}_entity';
+  final fileName = '${model.name.toSnakeCase()}_entity';
 
   var file = File('codegen/out/$fileName.dart');
 
   final output = Library(
     (lib) => lib
-    ..directives = ListBuilder(
-      [
+      ..annotations
+      ..directives = ListBuilder([
         Directive.import('package:freezed_annotation/freezed_annotation.dart'),
-        Directive.part('${model.name.toLowerCase()}_entity.freezed.dart'),
-        Directive.part('${model.name.toLowerCase()}_entity.g.dart'),
-      ]
-    )
+        Directive.part('${model.name.toSnakeCase()}_entity.freezed.dart'),
+        Directive.part('${model.name.toSnakeCase()}_entity.g.dart'),
+      ])
       ..body = ListBuilder(
         [
           Class(
@@ -52,19 +52,19 @@ Future<void> generateModel(Model model) async {
                   ),
                   if (model.toJson)
                     Constructor(
-                    (b) => b
-                      ..name = 'fromJson'
-                      ..lambda = true
-                      ..factory = true
-                      ..requiredParameters = ListBuilder(
-                        [
-                          Parameter((parameter) => parameter..name = 'json'..type=refer('Map<String, Object?>'))
-                        ]
-                      )
-                      ..body = Code(
-                        '_\$${model.name}EntityFromJson(json)',
-                      ),
-                  ),
+                      (b) => b
+                        ..name = 'fromJson'
+                        ..lambda = true
+                        ..factory = true
+                        ..requiredParameters = ListBuilder([
+                          Parameter((parameter) => parameter
+                            ..name = 'json'
+                            ..type = refer('Map<String, Object?>'))
+                        ])
+                        ..body = Code(
+                          '_\$${model.name}EntityFromJson(json)',
+                        ),
+                    ),
                 ],
               ),
           ),

@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:code_gen/blocs/todos/todo_event.dart';
 import 'package:code_gen/blocs/todos/todo_state.dart';
-import 'package:code_gen/repositories/todos/base_todo_repository.dart';
+import 'package:code_gen/repositories/todos/todo_repository.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  final BaseTodoRepository repository;
+  final TodoRepository repository;
 
   TodoBloc(this.repository) : super(const TodoState.initial(false)) {
     on<TodoGetTodo>((event, emit) async {
