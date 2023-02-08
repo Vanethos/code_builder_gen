@@ -20,17 +20,21 @@ void main() async {
     'Plushie',
     [
       Endpoint(
-        'getPlushie',
-        'PlushieEntity',
+        'getPlushies',
+        'List<PlushieEntity>',
         HttpMethod.get,
-        'http://myapp.com/getplushie',
+        'http://myapp.com/plushies',
       ),
-      Endpoint('getPlushie', 'PlushieEntity', HttpMethod.post,
-          'http://myapp.com/createplushie',
-          arguments: {
-            'name': 'String',
-          },
-          bodyToJsonType: 'PlushieCreateRequest'),
+      Endpoint(
+        'createPlushie',
+        'PlushieEntity',
+        HttpMethod.post,
+        'http://myapp.com/createplushie',
+        arguments: {
+          'name': 'String',
+        },
+        bodyToJsonType: 'PlushieCreateRequest',
+      ),
     ],
   );
 

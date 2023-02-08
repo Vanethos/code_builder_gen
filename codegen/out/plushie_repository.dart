@@ -5,21 +5,23 @@ import '../models/plushie';
 class PlushieRepository {
   PlushieRepository();
 
-  PlushieEntity getPlushie() {
+  Future<List<PlushieEntity>> getPlushies() async {
     return http
         .get(
           Uri.parse(
-            'http://myapp.com/getplushie',
+            'http://myapp.com/plushies',
           ),
         )
         .then(
-          (value) => PlushieEntity.fromJson(
-            jsonDecode(value.body),
+          (value) => List<PlushieEntity>.fromJson(
+            jsonDecode(value.body)
+                .map((item) => List<PlushieEntity>.fromJson(item))
+                .toList(),
           ),
         );
   }
 
-  PlushieEntity getPlushie(String name) {
+  Future<PlushieEntity> createPlushie(String name) async {
     return http
         .post(
           Uri.parse(

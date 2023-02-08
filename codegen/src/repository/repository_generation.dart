@@ -33,58 +33,7 @@ Future<void> generateRepository(Repository repository,
       )
       ..body = ListBuilder(
         [
-          Class(
-            (b) => b
-              ..name = '${repository.name}Repository'
-              ..constructors = ListBuilder(
-                [
-                  Constructor((b) => b),
-                ],
-              )
-              ..methods = ListBuilder(
-                [
-                  for (var method in repository.endpoints)
-                    Method(
-                      (m) => m
-                        ..name = method.name
-                        ..returns = refer(
-                          method.returnType,
-                        )
-                        ..modifier = method.returnType.contains('Future')
-                            ? MethodModifier.async
-                            : null
-                        ..requiredParameters = ListBuilder(
-                          [
-                            for (var parameter
-                                in method.arguments?.keys.toList() ??
-                                    <String>[])
-                              Parameter(
-                                (p) => p
-                                  ..name = parameter
-                                  ..type = refer(
-                                    method.arguments![parameter]!,
-                                  ),
-                              )
-                          ],
-                        )
-                        ..body = Code('''
- return http
-        .${method.method.name}(
-          Uri.parse(
-            '${method.url}',
-          ),
-          ${generateBody(method.arguments, method.bodyToJsonType)}
-        )
-        .then(
-          (value) => ${method.returnType}.fromJson(
-            jsonDecode(value.body),
-          ),
-        );
-'''),
-                    ),
-                ],
-              ),
-          ),
+          createClass(repository),
         ],
       ),
   );
@@ -93,13 +42,75 @@ Future<void> generateRepository(Repository repository,
   await file.writeAsString(DartFormatter().format('${output.accept(emitter)}'));
 }
 
-String generateBody(Map<String, String>? arguments, String? toJsonType) {
-  if (toJsonType == null) {
-    return '';
-  }
+Class createClass(Repository repository) {
+  return Class(
+    (b) => b
+      ..name = '${repository.name}Repository'
+      ..constructors = ListBuilder(
+        [
+          Constructor((b) => b),
+        ],
+      )
+      ..methods = ListBuilder(
+        createMethods(repository),
+      ),
+  );
+}
 
-  return '''body: $toJsonType(
-    ${arguments?.keys.map((key) => '$key: ${arguments[key]}').toList().join(',')}
+List<dynamic> createMethods(Repository repository) {
+  return [
+    for (var method in repository.endpoints)
+      Method(
+        (m) => m
+          ..name = method.name
+          ..returns = refer(
+            'Future<${method.returnType}>',
+          )
+          ..modifier = MethodModifier.async
+          ..requiredParameters = ListBuilder(
+            [
+              for (var parameter
+                  in method.arguments?.keys.toList() ?? <String>[])
+                Parameter(
+                  (p) => p
+                    ..name = parameter
+                    ..type = refer(
+                      method.arguments![parameter]!,
+                    ),
+                )
+            ],
+          )
+          ..body = generateBody(method),
+      ),
+  ];
+}
+
+Code generateBody(Endpoint method) {
+  String body = '';
+
+  if (method.bodyToJsonType != null) {
+    body = '''body: ${method.bodyToJsonType}(
+    ${method.arguments?.keys.map((key) => '$key: ${method.arguments?[key]}').toList().join(',')}
   ).toJson(),
 ''';
+  }
+
+  return Code('''
+ return http
+    .${method.method.name}(
+      Uri.parse(
+        '${method.url}',
+      ),
+      $body
+    )
+    ${method.returnType == 'void' ? ';' : """.then(
+      (value) => ${method.returnType}.fromJson(
+        ${method.returnType.contains('List<') ? """
+        jsonDecode(value.body).map((item) => ${RegExp(r"List<(.*)>").firstMatch(method.returnType)?[0]}.fromJson(item)).toList()
+        """ : "jsonDecode(value.body)"}
+        ,
+      ),
+    );
+"""}
+''');
 }
